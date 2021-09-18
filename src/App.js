@@ -30,12 +30,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      speechText: '',
       hhOptions: [],
       playerOptions: [],
       playerId: ''
     };
-    this.textChange = this.textChange.bind(this);
     this.hhChange = this.hhChange.bind(this);
     this.playerChange = this.playerChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -76,11 +74,6 @@ class App extends Component {
       });
   }
 
-
-  textChange(event) {
-    this.setState({ speechText: event.target.value });
-  }
-
   playerChange(event) {
     this.setState({ playerId: event.target.value });
   }
@@ -114,7 +107,7 @@ class App extends Component {
     this.setState({ // here we're clearing out any error that might have been on the screen before
       error:''
     });
-    fetch(`/api/speakText?text=${encodeURIComponent(this.state.speechText)}&playerId=${this.state.playerId}`)
+    fetch(`/api/speakText?playerId=${this.state.playerId}`)
       .then(response => response.json())
       .then(state => this.setState(state))
       .catch(err => this.setState({error:err.stack}));
@@ -125,7 +118,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <h2>
-            Sonos Text to Speech.
+            Sonos doorbell.
           </h2>
           <form onSubmit={this.handleSubmit}>
             <div id="hhSelector" style={{display: this.state.hhOptions.length > 1?'block':'none'}}>
@@ -146,14 +139,7 @@ class App extends Component {
             >
               {this.state.playerOptions}
             </select><br/>
-            <label htmlFor="speechText">Enter your text to speak: </label>
-            <input
-              id="speechText"
-              type="text"
-              value={this.state.speechText}
-              onChange={this.textChange}
-            /><br/>
-          <button type="submit" disabled={!this.state.speechText}>Submit</button>
+          <button type="submit">Submit</button>
           </form>
           {this.state.error}
         </header>

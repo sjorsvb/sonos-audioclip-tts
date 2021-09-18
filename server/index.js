@@ -208,7 +208,6 @@ app.get('/api/clipCapableSpeakers', async (req, res) => {
 
 // This is where we finally speak the text. The URL variables include the playerId and the text to speak
 app.get('/api/speakText', async (req, res) => {
-  const text = req.query.text;
   const playerId = req.query.playerId;
 
   const speakTextRes = res;
@@ -217,23 +216,12 @@ app.get('/api/speakText', async (req, res) => {
     res.send(JSON.stringify({'success':false,authRequired:true}));
   }
 
-  if (text == null || playerId == null) { // Return if either is null
+  if ( playerId == null ) { 
     speakTextRes.send(JSON.stringify({'success':false,error: 'Missing Parameters'}));
     return;
   }
 
-  let speechUrl;
-
-  try { // Let's make a call to the google tts api and get the url for our TTS file
-    speechUrl = await googleTTS(text, 'en-US', 1);
-  }
-  catch (err) {
-    speakTextRes.send(JSON.stringify({'success':false,error: err.stack}));
-    return;
-  }
-
-  const body = { streamUrl: speechUrl, name: 'Sonos TTS', appId: 'com.me.sonosspeech' };
-
+  const body = { name: 'Sonos doorbell', appId: 'nl.sjorsvanberkel.sonosdoorbell', priority: 'HIGH' };
   let audioClipRes;
 
   try { // And call the audioclip API, with the playerId in the url path, and the text in the JSON body
